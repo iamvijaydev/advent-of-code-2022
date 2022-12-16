@@ -1,32 +1,36 @@
-import { pipe, map, filter, split, length } from '../fp/index.mjs';
+import { pipe, map, filter, split, length, match } from '../fp/index.mjs';
 import input from './input.mjs';
-import { cleanValues } from './part-1.mjs';
 
-// isPartialOverlapping :: [String] -> Boolean
-const isPartialOverlapping = ([firstRange, secondRange]) => {
-  const [firstRangeFrom, firstRangeTo] = cleanValues(firstRange);
-  const [secondRangeFrom, secondRangeTo] = cleanValues(secondRange);
+// isSame :: ([Number] x 2) -> Boolean
+const isSame = (rangex, rangey) =>
+  rangex.some(num => rangey.includes(num));
 
-  const firstRangeLength = firstRangeTo - firstRangeFrom + 1;
-  const firstRangeAry = length === 0
-    ? [firstRangeFrom]
-    : Array.from({ length: firstRangeLength }, (_, i) => i + firstRangeFrom)
+// isOverlap :: ([Number] x 2) -> Boolean
+const isOverlap = (rangex, rangey) => {
+  const rangexMax = Math.max(...rangex);
+  const rangexMin = Math.min(...rangex);
+  const rangeyMax = Math.max(...rangey);
+  const rangeyMin = Math.min(...rangey);
 
-  const secondRangeLength = secondRangeTo - secondRangeFrom + 1;
-  const secondRangeAry = length === 0
-    ? [secondRangeFrom]
-    : Array.from({ length: secondRangeLength }, (_, i) => i + secondRangeFrom);
+  return (rangexMax >= rangeyMin && rangexMax <= rangeyMax)
+    || (rangeyMax >= rangexMin && rangeyMax <= rangexMax);
+}
 
-  return firstRangeAry.some(item => secondRangeAry.includes(item));
+// isOverlaping :: [Number] -> Boolean
+const isOverlaping = ([xmin, xmax, ymin, ymax]) => {
+  const rangex = [xmin, xmax];
+  const rangey = [ymin, ymax];
+
+  return isSame(rangex, rangey) || isOverlap(rangex, rangey)
 }
 
 export const compute = pipe(
   split('\n'),
   map(pipe(
-    split(','),
-    isPartialOverlapping
+    match(/(\d+)/g),
+    map(Number),
   )),
-  filter(Boolean),
+  filter(isOverlaping),
   length
 );
 

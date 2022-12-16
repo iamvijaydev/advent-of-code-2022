@@ -1,0 +1,1 @@
+export const match = regex => string => string.match(regex);

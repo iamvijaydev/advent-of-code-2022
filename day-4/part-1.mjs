@@ -1,28 +1,21 @@
-import { pipe, map, filter, split, length } from '../fp/index.mjs';
+import { pipe, map, filter, split, length, match, log } from '../fp/index.mjs';
 import input from './input.mjs';
 
-export const cleanValues = pipe(
-  split('-'),
-  map(Number)
-)
+// isContain :: (Number x 4) -> Boolean
+const isContain = (xmin, xmax, ymin, ymax) =>
+  xmin <= ymin && ymax <= xmax;
 
-const isFullOverlapping = ([firstRange, secondRange]) => {
-  const [firstRangeFrom, firstRangeTo] = cleanValues(firstRange);
-  const [secondRangeFrom, secondRangeTo] = cleanValues(secondRange);
-
-  const firstInSecond = firstRangeFrom >= secondRangeFrom && firstRangeTo <= secondRangeTo;
-  const secondInFirst = secondRangeFrom >= firstRangeFrom && secondRangeTo <= firstRangeTo;
-
-  return firstInSecond || secondInFirst;
-}
+// isContaining :: [Number] -> Boolean
+const isContaining = ([xmin, xmax, ymin, ymax]) =>
+  isContain(xmin, xmax, ymin, ymax) || isContain(ymin, ymax, xmin, xmax);
 
 export const compute = pipe(
   split('\n'),
   map(pipe(
-    split(','),
-    isFullOverlapping,
+    match(/(\d+)/g),
+    map(Number),
   )),
-  filter(Boolean),
+  filter(isContaining),
   length
 );
 

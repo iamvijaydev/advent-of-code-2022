@@ -6,3 +6,4 @@ export { aryTotal } from './aryTotal.mjs';
 export { sort } from './sort.mjs';
 export { log } from './log.mjs';
 export { length } from './length.mjs';
+export { match } from './match.mjs';
