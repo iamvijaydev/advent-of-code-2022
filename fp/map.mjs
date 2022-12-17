@@ -1,2 +1,2 @@
-// map :: Functor f => (a -> b) -> f a -> f b
+// map :: Function f -> [Any] -> [f(Any)]
 export const map = predicate => ary => ary.map(predicate);
